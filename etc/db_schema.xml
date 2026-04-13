@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+
+    <!-- Add order note column to quote table -->
+    <table name="quote" resource="checkout" comment="Quote Table">
+        <column xsi:type="text" name="panth_order_note" nullable="true" comment="Panth Order Note"/>
+    </table>
+
+    <!-- Add order note column to sales_order table -->
+    <table name="sales_order" resource="sales" comment="Sales Order Table">
+        <column xsi:type="text" name="panth_order_note" nullable="true" comment="Panth Order Note"/>
+    </table>
+
+    <!-- Add order note column to sales_order_grid table -->
+    <table name="sales_order_grid" resource="sales" comment="Sales Order Grid Table">
+        <column xsi:type="text" name="panth_order_note" nullable="true" comment="Panth Order Note"/>
+    </table>
+</schema>

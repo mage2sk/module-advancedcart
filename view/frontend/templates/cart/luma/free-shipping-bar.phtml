@@ -1,0 +1,58 @@
+<?php
+/**
+ * Panth AdvancedCart - Free Shipping Progress Bar (Luma)
+ *
+ * @var $block \Magento\Framework\View\Element\Template
+ * @var $escaper \Magento\Framework\Escaper
+ */
+
+/** @var \Panth\AdvancedCart\ViewModel\CartEnhancements $viewModel */
+$viewModel = $block->getData('view_model');
+
+if (!$viewModel->isFeatureEnabled('free_shipping_bar')) {
+    return;
+}
+
+$threshold = $viewModel->getFreeShippingThreshold();
+$percentage = $viewModel->getFreeShippingPercentage();
+$hasFreeShipping = $viewModel->hasFreeShipping();
+$message = $viewModel->getFreeShippingMessage();
+?>
+
+<style>
+.panth-fs-bar { margin-bottom: 24px; border-radius: 8px; padding: 16px; border: 1px solid; font-family: inherit; }
+.panth-fs-bar.achieved { background: #F0FDF4; border-color: #BBF7D0; }
+.panth-fs-bar.progress { background: #FFFBEB; border-color: #FDE68A; }
+.panth-fs-bar .fs-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.panth-fs-bar .fs-header svg { width: 20px; height: 20px; flex-shrink: 0; }
+.panth-fs-bar.achieved .fs-header svg { color: #16A34A; }
+.panth-fs-bar.progress .fs-header svg { color: #D97706; }
+.panth-fs-bar .fs-message { font-size: 14px; font-weight: 500; margin: 0; }
+.panth-fs-bar.achieved .fs-message { color: #166534; }
+.panth-fs-bar.progress .fs-message { color: #92400E; }
+.panth-fs-bar .fs-track { width: 100%; background: #E5E7EB; border-radius: 9999px; height: 8px; overflow: hidden; }
+.panth-fs-bar .fs-fill { height: 100%; border-radius: 9999px; transition: width 0.5s ease-out; }
+.panth-fs-bar.achieved .fs-fill { background: #22C55E; }
+.panth-fs-bar.progress .fs-fill { background: var(--color-primary, #0D9488); }
+.panth-fs-bar .fs-range { display: flex; justify-content: space-between; margin-top: 4px; font-size: 12px; color: #6B7280; }
+</style>
+
+<div class="panth-fs-bar <?= $hasFreeShipping ? 'achieved' : 'progress' ?>">
+    <div class="fs-header">
+        <?php if ($hasFreeShipping): ?>
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <?php else: ?>
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l2-1 2 1 2-1 2 1m0 0V6a1 1 0 011-1h2a1 1 0 011 1v4.586a1 1 0 01-.293.707l-2 2A1 1 0 0013 14v2m0 0h6m-6 0H7"/></svg>
+        <?php endif; ?>
+        <p class="fs-message"><?= $escaper->escapeHtml($message) ?></p>
+    </div>
+    <div class="fs-track">
+        <div class="fs-fill" style="width: <?= /** @noEscape */ min(100, $percentage) ?>%"></div>
+    </div>
+    <?php if (!$hasFreeShipping): ?>
+        <div class="fs-range">
+            <span><?= $escaper->escapeHtml($viewModel->formatPrice($viewModel->getCartSubtotal())) ?></span>
+            <span><?= $escaper->escapeHtml($viewModel->formatPrice($threshold)) ?></span>
+        </div>
+    <?php endif; ?>
+</div>

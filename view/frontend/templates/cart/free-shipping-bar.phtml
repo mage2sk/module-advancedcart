@@ -1,0 +1,53 @@
+<?php
+/**
+ * Panth AdvancedCart - Free Shipping Progress Bar (Hyva)
+ *
+ * @var $block \Magento\Framework\View\Element\Template
+ * @var $escaper \Magento\Framework\Escaper
+ */
+declare(strict_types=1);
+
+/** @var \Panth\AdvancedCart\ViewModel\CartEnhancements $viewModel */
+$viewModel = $block->getData('view_model');
+
+if (!$viewModel->isFeatureEnabled('free_shipping_bar')) {
+    return;
+}
+
+$threshold = $viewModel->getFreeShippingThreshold();
+$percentage = $viewModel->getFreeShippingPercentage();
+$hasFreeShipping = $viewModel->hasFreeShipping();
+$message = $viewModel->getFreeShippingMessage();
+?>
+
+<div class="panth-free-shipping-bar mb-6 rounded-lg border p-4
+    <?= $hasFreeShipping ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200' ?>">
+    <div class="flex items-center gap-3 mb-2">
+        <?php if ($hasFreeShipping): ?>
+            <svg class="w-5 h-5 text-green-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+        <?php else: ?>
+            <svg class="w-5 h-5 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l2-1 2 1 2-1 2 1m0 0V6a1 1 0 011-1h2a1 1 0 011 1v4.586a1 1 0 01-.293.707l-2 2A1 1 0 0013 14v2m0 0h6m-6 0H7"/>
+            </svg>
+        <?php endif; ?>
+        <p class="text-sm font-medium <?= $hasFreeShipping ? 'text-green-800' : 'text-amber-800' ?> m-0">
+            <?= $escaper->escapeHtml($message) ?>
+        </p>
+    </div>
+
+    <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+        <div class="h-full rounded-full transition-all duration-500 ease-out
+            <?= $hasFreeShipping ? 'bg-green-500' : 'bg-primary' ?>"
+             style="width: <?= /** @noEscape */ min(100, $percentage) ?>%">
+        </div>
+    </div>
+
+    <?php if (!$hasFreeShipping): ?>
+        <div class="flex justify-between mt-1">
+            <span class="text-xs text-gray-500"><?= $escaper->escapeHtml($viewModel->formatPrice($viewModel->getCartSubtotal())) ?></span>
+            <span class="text-xs text-gray-500"><?= $escaper->escapeHtml($viewModel->formatPrice($threshold)) ?></span>
+        </div>
+    <?php endif; ?>
+</div>

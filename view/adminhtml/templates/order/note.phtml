@@ -1,0 +1,17 @@
+<?php
+/** @var \Panth\AdvancedCart\Block\Adminhtml\Order\OrderNote $block */
+
+if (!$block->hasOrderNote()) {
+    return;
+}
+?>
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title">Customer Order Note</span>
+    </div>
+    <div class="admin__page-section-content">
+        <div style="padding: 12px 16px; background: #fffbe6; border: 1px solid #f5e6b8; border-radius: 4px; font-size: 14px; line-height: 1.6; color: #333;">
+            <?= $block->escapeHtml($block->getOrderNote(), ['br']) ?>
+        </div>
+    </div>
+</section>

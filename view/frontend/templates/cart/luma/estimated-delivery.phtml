@@ -1,0 +1,27 @@
+<?php
+/**
+ * Panth AdvancedCart - Estimated Delivery Date (Luma)
+ *
+ * @var $block \Magento\Framework\View\Element\Template
+ * @var $escaper \Magento\Framework\Escaper
+ */
+
+/** @var \Panth\AdvancedCart\ViewModel\CartEnhancements $viewModel */
+$viewModel = $block->getData('view_model');
+
+if (!$viewModel->isFeatureEnabled('estimated_delivery')) {
+    return;
+}
+
+$delivery = $viewModel->getEstimatedDeliveryRange();
+?>
+
+<div style="display: flex; align-items: center; gap: 8px; border-radius: 8px; background: #EFF6FF; border: 1px solid #BFDBFE; padding: 12px; margin-bottom: 16px;">
+    <svg width="20" height="20" style="color: #2563EB; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+    </svg>
+    <p style="font-size: 14px; color: #1E40AF; margin: 0;">
+        <strong><?= $escaper->escapeHtml(__($delivery['label'])) ?>:</strong>
+        <?= $escaper->escapeHtml($delivery['min_date']) ?> - <?= $escaper->escapeHtml($delivery['max_date']) ?>
+    </p>
+</div>

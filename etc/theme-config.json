@@ -1,0 +1,34 @@
+{
+  "colors": {
+    "primary": {
+      "DEFAULT": "#0D9488"
+    }
+  },
+  "modules": {
+    "advanced-cart": {
+      "free-shipping-bar": {
+        "progress-bg": "#FFFBEB",
+        "progress-border": "#FDE68A",
+        "progress-fill": "#0D9488",
+        "achieved-bg": "#F0FDF4",
+        "achieved-border": "#BBF7D0",
+        "achieved-fill": "#22C55E"
+      },
+      "savings": {
+        "bg": "#F0FDF4",
+        "border": "#BBF7D0",
+        "text": "#166534",
+        "amount": "#16A34A"
+      },
+      "estimated-delivery": {
+        "bg": "#EFF6FF",
+        "border": "#BFDBFE",
+        "text": "#1E40AF"
+      },
+      "trust-badges": {
+        "icon": "#0D9488",
+        "text": "#6B7280"
+      }
+    }
+  }
+}

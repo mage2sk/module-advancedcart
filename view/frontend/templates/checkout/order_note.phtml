@@ -1,0 +1,98 @@
+<?php
+/** @var \Panth\AdvancedCart\Block\Checkout\OrderNote $block */
+if (!$block->isEnabled()) {
+    return;
+}
+?>
+<script>
+require(['jquery', 'mage/translate', 'jquery/jquery.cookie'], function ($, $t) {
+    'use strict';
+
+    var maxLen      = <?= (int) $block->getMaxLength() ?>;
+    var label       = $t('<?= $block->escapeJs($block->getLabel()) ?>');
+    var placeholder = $t('<?= $block->escapeJs($block->getPlaceholder()) ?>');
+    var saveUrl     = '<?= $block->escapeJs($block->getSaveUrl()) ?>';
+    var currentNote = '<?= $block->escapeJs($block->getCurrentNote()) ?>';
+    var isPanth     = $('body').hasClass('panth-checkout-extended');
+
+    function buildEl() {
+        var $wrap = $('<div>', { id: 'panth-order-note-wrap', 'class': 'panth-order-note-wrap' });
+        var $lbl  = $('<label>', { 'class': 'panth-order-note-label', 'for': 'panth-order-note' }).text(label);
+        var $ta   = $('<textarea>', {
+            id: 'panth-order-note',
+            'class': 'panth-order-note-textarea',
+            maxlength: maxLen,
+            rows: 3
+        }).attr('placeholder', placeholder).val(currentNote);
+        var $hint = $('<span>', { 'class': 'panth-order-note-saving', id: 'panth-note-saving' }).text($t('Saving...'));
+        $wrap.append($lbl, $ta, $hint);
+
+        if (!isPanth) {
+            $wrap.css({ margin: '12px 0 0', padding: '12px 0 0', borderTop: '1px solid #eee' });
+            $lbl.css({ display: 'block', fontSize: '13px', fontWeight: '600', color: '#555', marginBottom: '6px' });
+            $ta.css({ width: '100%', padding: '8px 10px', border: '1px solid #ccc', borderRadius: '4px', fontSize: '13px', boxSizing: 'border-box', resize: 'vertical', fontFamily: 'inherit' });
+            $hint.css({ fontSize: '11px', color: '#999', display: 'none' });
+        }
+
+        var saveTimer;
+        $ta.on('input', function () {
+            clearTimeout(saveTimer);
+            if (isPanth) { $hint.addClass('visible'); } else { $hint.css('display', 'inline'); }
+            var note = $ta.val();
+            saveTimer = setTimeout(function () {
+                $.ajax({
+                    url: saveUrl,
+                    type: 'POST',
+                    data: { note: note, form_key: $.cookie('form_key') },
+                    complete: function () {
+                        if (isPanth) { $hint.removeClass('visible'); } else { $hint.css('display', 'none'); }
+                    }
+                });
+            }, 800);
+        });
+
+        return $wrap;
+    }
+
+    function inject() {
+        if ($('#panth-order-note-wrap').length) return true;
+
+        // Target 1: .checkout-methods-items (Place Order button wrapper in sidebar)
+        var $target = $('.checkout-methods-items');
+        if ($target.length) {
+            $target.before(buildEl());
+            return true;
+        }
+
+        // Target 2: .action.checkout.primary button — go up to its li or actions wrapper
+        $target = $('.opc-block-summary .action.checkout').closest('li, .actions-toolbar');
+        if ($target.length) {
+            $target.before(buildEl());
+            return true;
+        }
+
+        // Target 3: after the LAST payment-option block (discount code section)
+        $target = $('.opc-block-summary .payment-option').last();
+        if ($target.length) {
+            $target.after(buildEl());
+            return true;
+        }
+
+        // Target 4: after the totals table
+        $target = $('.opc-block-summary .table-totals');
+        if ($target.length) {
+            $target.after(buildEl());
+            return true;
+        }
+
+        return false;
+    }
+
+    var attempts = 0;
+    var timer = setInterval(function () {
+        attempts++;
+        if (attempts > 60) { clearInterval(timer); return; }
+        if (inject()) { clearInterval(timer); }
+    }, 600);
+});
+</script>

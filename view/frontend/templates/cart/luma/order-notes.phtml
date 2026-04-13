@@ -1,0 +1,96 @@
+<?php
+/**
+ * Panth AdvancedCart - Order Notes (Luma)
+ *
+ * @var $block \Magento\Framework\View\Element\Template
+ * @var $escaper \Magento\Framework\Escaper
+ */
+
+/** @var \Panth\AdvancedCart\ViewModel\CartEnhancements $viewModel */
+$viewModel = $block->getData('view_model');
+
+if (!$viewModel->isFeatureEnabled('order_notes')) {
+    return;
+}
+
+$placeholder = $viewModel->getOrderNotesPlaceholder();
+$maxLength = $viewModel->getOrderNotesMaxLength();
+$existingNote = $viewModel->getExistingOrderNote();
+$saveUrl = $block->getUrl('advancedcart/cart/saveNote');
+$uniqueId = 'panth-order-notes-' . uniqid();
+?>
+
+<style>
+.panth-order-notes { margin-top: 24px; }
+.panth-order-notes summary { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px 0; font-weight: 600; font-size: 16px; list-style: none; user-select: none; }
+.panth-order-notes summary::-webkit-details-marker { display: none; }
+.panth-order-notes summary svg { width: 20px; height: 20px; color: var(--color-primary, #0D9488); flex-shrink: 0; }
+.panth-order-notes .note-status { font-size: 12px; font-weight: 400; margin-left: auto; }
+.panth-order-notes .note-status.saved { color: #16A34A; }
+.panth-order-notes .note-status.saving { color: #9CA3AF; }
+.panth-order-notes textarea { width: 100%; padding: 8px 12px; border: 1px solid #D1D5DB; border-radius: 6px; font-size: 14px; resize: none; font-family: inherit; box-sizing: border-box; }
+.panth-order-notes textarea:focus { outline: none; border-color: var(--color-primary, #0D9488); box-shadow: 0 0 0 2px rgba(13,148,136,0.1); }
+.panth-order-notes .char-count { font-size: 12px; color: #9CA3AF; margin-top: 4px; }
+</style>
+
+<div class="panth-order-notes" id="<?= $escaper->escapeHtmlAttr($uniqueId) ?>">
+    <details open>
+        <summary>
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            <span><?= $escaper->escapeHtml(__('Order Notes')) ?></span>
+            <span class="note-status" id="<?= $escaper->escapeHtmlAttr($uniqueId) ?>-status"></span>
+        </summary>
+        <div style="margin-top: 8px;">
+            <textarea id="<?= $escaper->escapeHtmlAttr($uniqueId) ?>-textarea"
+                      rows="3"
+                      maxlength="<?= (int)$maxLength ?>"
+                      placeholder="<?= $escaper->escapeHtmlAttr(__($placeholder)) ?>"><?= $escaper->escapeHtml($existingNote) ?></textarea>
+            <p class="char-count">
+                <span id="<?= $escaper->escapeHtmlAttr($uniqueId) ?>-count"><?= (int)strlen($existingNote) ?></span>/<?= (int)$maxLength ?> <?= $escaper->escapeHtml(__('characters')) ?>
+            </p>
+        </div>
+    </details>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var containerId = '<?= $escaper->escapeJs($uniqueId) ?>';
+    var textarea = document.getElementById(containerId + '-textarea');
+    var status = document.getElementById(containerId + '-status');
+    var counter = document.getElementById(containerId + '-count');
+    var saveUrl = '<?= $escaper->escapeJs($saveUrl) ?>';
+    var timeout;
+
+    if (!textarea) return;
+
+    textarea.addEventListener('input', function() {
+        counter.textContent = textarea.value.length;
+        clearTimeout(timeout);
+        timeout = setTimeout(function() {
+            status.textContent = '<?= $escaper->escapeJs(__('Saving...')) ?>';
+            status.className = 'note-status saving';
+
+            var formKey = document.querySelector('input[name="form_key"]');
+            var body = 'form_key=' + (formKey ? formKey.value : '') + '&note=' + encodeURIComponent(textarea.value);
+
+            fetch(saveUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+                body: body
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(data) {
+                if (data.success) {
+                    status.textContent = '<?= $escaper->escapeJs(__('Saved')) ?>';
+                    status.className = 'note-status saved';
+                    setTimeout(function() { status.textContent = ''; }, 2000);
+                }
+            })
+            .catch(function() {
+                status.textContent = '';
+                status.className = 'note-status';
+            });
+        }, 800);
+    });
+});
+</script>

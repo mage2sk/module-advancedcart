@@ -1,0 +1,81 @@
+<?php
+/**
+ * Panth AdvancedCart - Enhanced Empty Cart (Hyva)
+ *
+ * @var $block \Magento\Checkout\Block\Cart
+ * @var $escaper \Magento\Framework\Escaper
+ */
+declare(strict_types=1);
+
+/** @var \Panth\AdvancedCart\ViewModel\CartEnhancements|null $viewModel */
+$viewModel = $block->getData('view_model');
+
+$isEnhanced = $viewModel instanceof \Panth\AdvancedCart\ViewModel\CartEnhancements
+    && $viewModel->isFeatureEnabled('empty_cart');
+$heading = $isEnhanced ? $viewModel->getEmptyCartHeading() : 'Your cart is empty';
+$message = $isEnhanced ? $viewModel->getEmptyCartMessage() : '';
+$buttonLabel = $isEnhanced ? $viewModel->getEmptyCartButtonLabel() : 'Continue Shopping';
+?>
+
+<div class="cart-empty">
+    <?= $block->getChildHtml('checkout_cart_empty_widget') ?>
+
+    <?php if ($isEnhanced): ?>
+        <div class="flex flex-col items-center justify-center py-12 text-center max-w-md mx-auto">
+            <!-- Empty cart illustration -->
+            <div class="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mb-6">
+                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/>
+                </svg>
+            </div>
+
+            <h2 class="text-2xl font-bold text-gray-800 mb-3">
+                <?= $escaper->escapeHtml(__($heading)) ?>
+            </h2>
+
+            <p class="text-gray-500 mb-6 leading-relaxed">
+                <?= $escaper->escapeHtml(__($message)) ?>
+            </p>
+
+            <a href="<?= $escaper->escapeUrl($block->getContinueShoppingUrl()) ?>"
+               class="btn btn-primary px-8 py-3 text-base inline-flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                </svg>
+                <?= $escaper->escapeHtml(__($buttonLabel)) ?>
+            </a>
+
+            <div class="mt-8 flex items-center gap-6 text-sm text-gray-400">
+                <span class="flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    <?= $escaper->escapeHtml(__('Secure Checkout')) ?>
+                </span>
+                <span class="flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    <?= $escaper->escapeHtml(__('Easy Returns')) ?>
+                </span>
+                <span class="flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l2-1 2 1 2-1 2 1m0 0V6a1 1 0 011-1h2a1 1 0 011 1v4.586a1 1 0 01-.293.707l-2 2A1 1 0 0013 14v2m0 0h6m-6 0H7"/>
+                    </svg>
+                    <?= $escaper->escapeHtml(__('Free Shipping')) ?>
+                </span>
+            </div>
+        </div>
+    <?php else: ?>
+        <div>
+            <p><?= $escaper->escapeHtml(__('You have no items in your shopping cart.')) ?></p>
+            <p class="mt-4">
+                <a href="<?= $escaper->escapeUrl($block->getContinueShoppingUrl()) ?>" class="btn btn-primary">
+                    <?= $escaper->escapeHtml(__('Click here to continue shopping.')) ?>
+                </a>
+            </p>
+        </div>
+    <?php endif; ?>
+
+    <?= $block->getChildHtml('shopping.cart.table.after') ?>
+</div>

@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <!-- Center the page title -->
+        <referenceBlock name="page.main.title">
+            <arguments>
+                <argument name="css_class" xsi:type="string">text-3xl font-bold mb-6 text-center</argument>
+                <argument name="wrapper_css_classes" xsi:type="string">container</argument>
+            </arguments>
+        </referenceBlock>
+
+        <!-- Free Shipping Progress Bar - above cart items -->
+        <referenceContainer name="checkout.cart.form.before">
+            <block class="Panth\AdvancedCart\Block\Cart\CartBlock"
+                   name="panth.advancedcart.free.shipping.bar"
+                   template="Panth_AdvancedCart::cart/free-shipping-bar.phtml"
+                   before="-">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Panth\AdvancedCart\ViewModel\CartEnhancements</argument>
+                </arguments>
+            </block>
+
+            <!-- Continue Shopping Button -->
+            <block class="Panth\AdvancedCart\Block\Cart\CartBlock"
+                   name="panth.advancedcart.continue.shopping"
+                   template="Panth_AdvancedCart::cart/continue-shopping.phtml"
+                   after="panth.advancedcart.free.shipping.bar">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Panth\AdvancedCart\ViewModel\CartEnhancements</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+
+        <!-- Order Notes - after cart items -->
+        <referenceContainer name="checkout.cart.widget">
+            <block class="Panth\AdvancedCart\Block\Cart\CartBlock"
+                   name="panth.advancedcart.order.notes"
+                   template="Panth_AdvancedCart::cart/order-notes.phtml"
+                   before="-">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Panth\AdvancedCart\ViewModel\CartEnhancements</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+
+        <!-- Cart Savings - in summary before totals -->
+        <referenceContainer name="cart.summary.before">
+            <block class="Panth\AdvancedCart\Block\Cart\CartBlock"
+                   name="panth.advancedcart.cart.savings"
+                   template="Panth_AdvancedCart::cart/cart-savings.phtml"
+                   before="-">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Panth\AdvancedCart\ViewModel\CartEnhancements</argument>
+                </arguments>
+            </block>
+
+            <!-- Estimated Delivery - in summary -->
+            <block class="Panth\AdvancedCart\Block\Cart\CartBlock"
+                   name="panth.advancedcart.estimated.delivery"
+                   template="Panth_AdvancedCart::cart/estimated-delivery.phtml"
+                   after="panth.advancedcart.cart.savings">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Panth\AdvancedCart\ViewModel\CartEnhancements</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+
+        <!-- Trust Badges - after checkout methods in summary -->
+        <referenceContainer name="cart.summary">
+            <block class="Panth\AdvancedCart\Block\Cart\CartBlock"
+                   name="panth.advancedcart.trust.badges"
+                   template="Panth_AdvancedCart::cart/trust-badges.phtml"
+                   after="-">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">Panth\AdvancedCart\ViewModel\CartEnhancements</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+
+        <!-- Enhanced Empty Cart - override core block template + inject ViewModel via DI -->
+        <referenceBlock name="checkout.cart.empty" template="Panth_AdvancedCart::cart/empty-cart.phtml">
+            <arguments>
+                <argument name="view_model" xsi:type="object">Panth\AdvancedCart\ViewModel\CartEnhancements</argument>
+            </arguments>
+        </referenceBlock>
+
+        <!-- Enhanced Empty Cart is also handled via theme template override at:
+             Panth/Infotech/Magento_Checkout/templates/php-cart/noItems.phtml -->
+    </body>
+</page>

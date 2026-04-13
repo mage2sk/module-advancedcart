@@ -1,0 +1,29 @@
+<?php
+/**
+ * Panth AdvancedCart - Cart Savings Display (Hyva)
+ *
+ * @var $block \Magento\Framework\View\Element\Template
+ * @var $escaper \Magento\Framework\Escaper
+ */
+declare(strict_types=1);
+
+/** @var \Panth\AdvancedCart\ViewModel\CartEnhancements $viewModel */
+$viewModel = $block->getData('view_model');
+
+if (!$viewModel->isFeatureEnabled('cart_savings') || !$viewModel->hasCartSavings()) {
+    return;
+}
+?>
+
+<div class="panth-cart-savings flex items-center gap-2 rounded-lg bg-green-50 border border-green-200 p-3 mb-4">
+    <svg class="w-5 h-5 text-green-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/>
+    </svg>
+    <div>
+        <p class="text-sm font-semibold text-green-800 m-0">
+            <?= $escaper->escapeHtml(__('You save')) ?>
+            <span class="text-green-600"><?= $escaper->escapeHtml($viewModel->getFormattedCartSavings()) ?></span>
+            <?= $escaper->escapeHtml(__('on this order!')) ?>
+        </p>
+    </div>
+</div>

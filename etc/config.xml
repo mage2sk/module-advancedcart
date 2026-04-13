@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <panth_advancedcart>
+            <general>
+                <enabled>1</enabled>
+            </general>
+            <free_shipping_bar>
+                <enabled>1</enabled>
+                <threshold>50</threshold>
+                <message_progress>You're only {{remaining}} away from free shipping!</message_progress>
+                <message_achieved>Congratulations! You've earned FREE shipping!</message_achieved>
+            </free_shipping_bar>
+            <qty_buttons>
+                <enabled>1</enabled>
+            </qty_buttons>
+            <trust_badges>
+                <enabled>1</enabled>
+                <badges>secure_checkout,money_back,free_returns</badges>
+            </trust_badges>
+            <continue_shopping>
+                <enabled>1</enabled>
+                <label>Continue Shopping</label>
+                <url>/</url>
+            </continue_shopping>
+            <cart_savings>
+                <enabled>1</enabled>
+            </cart_savings>
+            <estimated_delivery>
+                <enabled>1</enabled>
+                <min_days>3</min_days>
+                <max_days>7</max_days>
+                <label>Estimated Delivery</label>
+            </estimated_delivery>
+            <order_notes>
+                <enabled>1</enabled>
+                <placeholder>Add special instructions for your order...</placeholder>
+                <max_length>500</max_length>
+            </order_notes>
+            <empty_cart>
+                <enabled>1</enabled>
+                <heading>Your cart is empty</heading>
+                <message>Looks like you haven't added anything to your cart yet. Browse our collection and find something you love!</message>
+                <button_label>Start Shopping</button_label>
+            </empty_cart>
+        </panth_advancedcart>
+    </default>
+</config>

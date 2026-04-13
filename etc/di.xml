@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Copy panth_order_note from quote to order on placement -->
+    <type name="Magento\Quote\Model\QuoteManagement">
+        <plugin name="panth_advancedcart_quote_to_order_note"
+                type="Panth\AdvancedCart\Plugin\QuoteToOrderPlugin"
+                sortOrder="10"/>
+    </type>
+</config>
