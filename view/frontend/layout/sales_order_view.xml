@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block class="Panth\AdvancedCart\Block\Order\OrderNote"
+                   name="panth.advancedcart.order.note.frontend"
+                   template="Panth_AdvancedCart::order/note.phtml"
+                   after="sales.order.view"
+                   cacheable="false"/>
+        </referenceContainer>
+    </body>
+</page>

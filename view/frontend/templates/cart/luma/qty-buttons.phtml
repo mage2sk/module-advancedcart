@@ -1,0 +1,118 @@
+<?php
+/**
+ * Panth AdvancedCart - Quantity +/- Buttons (Luma)
+ *
+ * @var $block \Magento\Framework\View\Element\Template
+ * @var $escaper \Magento\Framework\Escaper
+ */
+
+/** @var \Panth\AdvancedCart\ViewModel\CartEnhancements $viewModel */
+$viewModel = $block->getData('view_model');
+
+if (!$viewModel->isEnabled()) {
+    return;
+}
+
+$qtyButtonsEnabled = $viewModel->isQtyButtonsEnabled();
+?>
+<script>
+(function () {
+    var enabled = <?= $qtyButtonsEnabled ? 'true' : 'false' ?>;
+    var labels = {
+        dec: '<?= $escaper->escapeJs(__('Decrease quantity')) ?>',
+        inc: '<?= $escaper->escapeJs(__('Increase quantity')) ?>'
+    };
+
+    function isButton(el) {
+        return !!el && el.tagName === 'BUTTON';
+    }
+
+    function createButton(label, text) {
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.setAttribute('aria-label', label);
+        button.setAttribute('data-panth-qty-button', '');
+        button.className = 'panth-ac-qty-btn';
+        button.textContent = text;
+        return button;
+    }
+
+    function stepQty(input, direction) {
+        var step = parseFloat(input.getAttribute('step'));
+        if (isNaN(step) || step <= 0) {
+            step = 1;
+        }
+        var min = parseFloat(input.getAttribute('min'));
+        if (isNaN(min) || min <= 0) {
+            min = step < 1 ? step : 1;
+        }
+        var max = parseFloat(input.getAttribute('max'));
+        var current = parseFloat(input.value);
+        if (isNaN(current)) {
+            current = min;
+        }
+        var next = Math.round((current + direction * step) * 10000) / 10000;
+        if (next < min) {
+            next = min;
+        }
+        if (!isNaN(max) && max > 0 && next > max) {
+            next = max;
+        }
+        if (next === current) {
+            return;
+        }
+        input.value = next;
+        input.dispatchEvent(new Event('input', {bubbles: true}));
+        input.dispatchEvent(new Event('change', {bubbles: true}));
+    }
+
+    function init() {
+        var inputs = document.querySelectorAll('input[data-role="cart-item-qty"]');
+        Array.prototype.forEach.call(inputs, function (input, index) {
+            var prev = input.previousElementSibling;
+            var next = input.nextElementSibling;
+            if (!enabled) {
+                [prev, next].forEach(function (el) {
+                    if (isButton(el)) {
+                        el.hidden = true;
+                        el.style.display = 'none';
+                    }
+                });
+                return;
+            }
+            if (input.hasAttribute('data-panth-qty-ready') || isButton(prev) || isButton(next)) {
+                return;
+            }
+            input.setAttribute('data-panth-qty-ready', '1');
+            var label = input.closest('label');
+            if (label && !label.htmlFor) {
+                if (!input.id) {
+                    input.id = 'panth-cart-qty-' + index;
+                }
+                label.htmlFor = input.id;
+            }
+            var dec = createButton(labels.dec, '-');
+            var inc = createButton(labels.inc, '+');
+            dec.addEventListener('click', function () {
+                stepQty(input, -1);
+            });
+            inc.addEventListener('click', function () {
+                stepQty(input, 1);
+            });
+            input.parentNode.insertBefore(dec, input);
+            input.parentNode.insertBefore(inc, input.nextSibling);
+            var wrapper = input.parentNode;
+            wrapper.classList.add('panth-ac-qty-wrap');
+            wrapper.style.display = 'inline-flex';
+            wrapper.style.alignItems = 'center';
+            wrapper.style.gap = '6px';
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+</script>

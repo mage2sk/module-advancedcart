@@ -1,0 +1,17 @@
+{
+    "quote": {
+        "column": {
+            "panth_order_note": true
+        }
+    },
+    "sales_order": {
+        "column": {
+            "panth_order_note": true
+        }
+    },
+    "sales_order_grid": {
+        "column": {
+            "panth_order_note": true
+        }
+    }
+}

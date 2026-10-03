@@ -1,0 +1,37 @@
+<?php
+/**
+ * Panth AdvancedCart - Free Shipping Progress Bar (Luma)
+ *
+ * @var $block \Magento\Framework\View\Element\Template
+ * @var $escaper \Magento\Framework\Escaper
+ */
+
+/** @var \Panth\AdvancedCart\ViewModel\CartEnhancements $viewModel */
+$viewModel = $block->getData('view_model');
+if (!$viewModel->isFeatureEnabled('free_shipping_bar')) {
+    return;
+}
+$threshold = $viewModel->getFreeShippingThresholdAmount();
+$percentage = $viewModel->getFreeShippingPercentage();
+$hasFreeShipping = $viewModel->hasFreeShipping();
+$message = $viewModel->getFreeShippingMessage();
+?>
+<div class="panth-ac panth-ac-fs panth-free-shipping-bar<?= $hasFreeShipping ? ' panth-ac-fs--achieved' : '' ?>">
+    <div class="panth-ac-fs__head">
+        <?php if ($hasFreeShipping): ?>
+            <svg class="panth-ac-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <?php else: ?>
+            <svg class="panth-ac-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10l2-1 2 1 2-1 2 1m0 0V6a1 1 0 011-1h2a1 1 0 011 1v4.586a1 1 0 01-.293.707l-2 2A1 1 0 0013 14v2m0 0h6m-6 0H7"/></svg>
+        <?php endif; ?>
+        <p class="panth-ac-fs__msg fs-message"><?= $escaper->escapeHtml($message) ?></p>
+    </div>
+    <div class="panth-ac-fs__track" role="progressbar" aria-label="<?= $escaper->escapeHtmlAttr(__('Free shipping progress')) ?>" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<?= (int) min(100, $percentage) ?>">
+        <div class="panth-ac-fs__fill" style="width: <?= /** @noEscape */ min(100, $percentage) ?>%"></div>
+    </div>
+    <?php if (!$hasFreeShipping): ?>
+        <div class="panth-ac-fs__range">
+            <span><?= $escaper->escapeHtml($viewModel->formatPrice($viewModel->getCartSubtotal())) ?></span>
+            <span><?= $escaper->escapeHtml($viewModel->formatPrice($threshold)) ?></span>
+        </div>
+    <?php endif; ?>
+</div>

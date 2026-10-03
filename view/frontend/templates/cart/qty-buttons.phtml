@@ -1,0 +1,121 @@
+<?php
+/**
+ * Panth AdvancedCart - Quantity +/- Buttons (Hyva)
+ *
+ * @var $block \Magento\Framework\View\Element\Template
+ * @var $escaper \Magento\Framework\Escaper
+ */
+declare(strict_types=1);
+
+/** @var \Panth\AdvancedCart\ViewModel\CartEnhancements $viewModel */
+$viewModel = $block->getData('view_model');
+
+if (!$viewModel->isEnabled()) {
+    return;
+}
+
+$qtyButtonsEnabled = $viewModel->isQtyButtonsEnabled();
+?>
+<script>
+(function () {
+    var enabled = <?= $qtyButtonsEnabled ? 'true' : 'false' ?>;
+    var labels = {
+        dec: '<?= $escaper->escapeJs(__('Decrease quantity')) ?>',
+        inc: '<?= $escaper->escapeJs(__('Increase quantity')) ?>'
+    };
+    var buttonStyle = 'width:2.25rem;height:2.25rem;display:inline-flex;align-items:center;justify-content:center;'
+        + 'border:1px solid #D1D5DB;border-radius:0.5rem;background:#fff;color:#374151;cursor:pointer;'
+        + 'padding:0;font-size:1.125rem;line-height:1;flex-shrink:0;';
+
+    function isButton(el) {
+        return !!el && el.tagName === 'BUTTON';
+    }
+
+    function createButton(label, text) {
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.setAttribute('aria-label', label);
+        button.setAttribute('data-panth-qty-button', '');
+        button.setAttribute('style', buttonStyle);
+        button.textContent = text;
+        return button;
+    }
+
+    function stepQty(input, direction) {
+        var step = parseFloat(input.getAttribute('step'));
+        if (isNaN(step) || step <= 0) {
+            step = 1;
+        }
+        var min = parseFloat(input.getAttribute('min'));
+        if (isNaN(min) || min <= 0) {
+            min = step < 1 ? step : 1;
+        }
+        var max = parseFloat(input.getAttribute('max'));
+        var current = parseFloat(input.value);
+        if (isNaN(current)) {
+            current = min;
+        }
+        var next = Math.round((current + direction * step) * 10000) / 10000;
+        if (next < min) {
+            next = min;
+        }
+        if (!isNaN(max) && max > 0 && next > max) {
+            next = max;
+        }
+        if (next === current) {
+            return;
+        }
+        input.value = next;
+        input.dispatchEvent(new Event('input', {bubbles: true}));
+        input.dispatchEvent(new Event('change', {bubbles: true}));
+    }
+
+    function init() {
+        var inputs = document.querySelectorAll('input[data-role="cart-item-qty"]');
+        Array.prototype.forEach.call(inputs, function (input, index) {
+            var prev = input.previousElementSibling;
+            var next = input.nextElementSibling;
+            if (!enabled) {
+                [prev, next].forEach(function (el) {
+                    if (isButton(el)) {
+                        el.hidden = true;
+                        el.style.display = 'none';
+                    }
+                });
+                return;
+            }
+            if (input.hasAttribute('data-panth-qty-ready') || isButton(prev) || isButton(next)) {
+                return;
+            }
+            input.setAttribute('data-panth-qty-ready', '1');
+            var label = input.closest('label');
+            if (label && !label.htmlFor) {
+                if (!input.id) {
+                    input.id = 'panth-cart-qty-' + index;
+                }
+                label.htmlFor = input.id;
+            }
+            var dec = createButton(labels.dec, '-');
+            var inc = createButton(labels.inc, '+');
+            dec.addEventListener('click', function () {
+                stepQty(input, -1);
+            });
+            inc.addEventListener('click', function () {
+                stepQty(input, 1);
+            });
+            input.parentNode.insertBefore(dec, input);
+            input.parentNode.insertBefore(inc, input.nextSibling);
+            var wrapper = input.parentNode;
+            wrapper.style.display = 'inline-flex';
+            wrapper.style.alignItems = 'center';
+            wrapper.style.gap = '0.25rem';
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+</script>

@@ -1,0 +1,22 @@
+<?php
+/**
+ * Panth AdvancedCart - Continue Shopping Button (Luma)
+ *
+ * @var $block \Magento\Framework\View\Element\Template
+ * @var $escaper \Magento\Framework\Escaper
+ */
+
+/** @var \Panth\AdvancedCart\ViewModel\CartEnhancements $viewModel */
+$viewModel = $block->getData('view_model');
+if (!$viewModel->isFeatureEnabled('continue_shopping')) {
+    return;
+}
+$label = $viewModel->getContinueShoppingLabel();
+$url = $viewModel->getContinueShoppingUrl();
+?>
+<div class="panth-ac panth-ac-continue panth-continue-shopping">
+    <a class="panth-ac-continue__link" href="<?= $escaper->escapeUrl($url) ?>">
+        <svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        <?= $escaper->escapeHtml(__($label)) ?>
+    </a>
+</div>
