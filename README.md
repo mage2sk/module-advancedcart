@@ -241,7 +241,7 @@ Disabling the module leaves the `panth_order_note` columns on `quote`, `sales_or
 
 ## License
 
-Commercial software license. See [LICENSE.txt](LICENSE.txt) in this repository.
+Free and open source under the MIT License. See [LICENSE.txt](LICENSE.txt).
 
 ## Changelog
 
